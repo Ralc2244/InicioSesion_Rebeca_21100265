@@ -1,123 +1,89 @@
-import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
-import { Producto } from '../models/product';
-import { map, Observable, of } from 'rxjs';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { isPlatformBrowser } from '@angular/common';
-import { catchError } from 'rxjs/operators';
-import { BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { Producto } from '../models/producto';
+
 @Injectable({
   providedIn: 'root'
 })
 export class InventarioService {
-  private xmlUrl = 'assets/productos.xml'; // Ruta al archivo XML
-  private productos: Producto[] = [];
+  private apiUrl = 'http://localhost:3000/api/productos'; // Endpoint de JSON Server
   private productosSubject = new BehaviorSubject<Producto[]>([]);
   productos$ = this.productosSubject.asObservable();
-  
-  constructor(
-    private http: HttpClient,
-    @Inject(PLATFORM_ID) private platformId: Object
-  ) {
-    this.cargarProductosDesdeXML().subscribe({
+
+  constructor(private http: HttpClient) {
+    this.cargarProductosDesdeBackend().subscribe({
       next: (productos) => {
-        this.productos = productos;
-        this.productosSubject.next(productos); // Notificar que los productos están listos
+        this.productosSubject.next(productos); // Actualiza el BehaviorSubject
       },
       error: (error) => {
         console.error('Error al cargar productos:', error);
       }
     });
   }
-  private cargarProductosDesdeXML(): Observable<Producto[]> {
-    return this.http.get(this.xmlUrl, { responseType: 'text' }).pipe(
-      map((xml) => {
-        if (isPlatformBrowser(this.platformId)) {
-          try {
-            const parser = new DOMParser();
-            const xmlDoc = parser.parseFromString(xml, 'text/xml');
-            console.log('XML cargado:', xmlDoc); // Depuración
-  
-            const productos = Array.from(xmlDoc.querySelectorAll('producto')).map((prod) => ({
-              id: Number(prod.getElementsByTagName('id')[0]?.textContent) || 0,
-              nombre: prod.getElementsByTagName('nombre')[0]?.textContent ?? 'Sin nombre',
-              preciop: Number(prod.getElementsByTagName('preciop')[0]?.textContent) || 0,
-              imagen: prod.getElementsByTagName('imagen')[0]?.textContent ?? 'sin_imagen.jpg',
-              cantidad: Number(prod.getElementsByTagName('cantidad')[0]?.textContent) || 0
 
-            }));
-  
-            console.log('Productos parseados:', productos); // Depuración
-            return productos;
-          } catch (error) {
-            console.error('Error al parsear el XML:', error);
-            return [];
-          }
-        }
-        return [];
-      }),
+  private cargarProductosDesdeBackend(): Observable<Producto[]> {
+    return this.http.get<Producto[]>(this.apiUrl).pipe(
       catchError((error) => {
-        console.error('Error al cargar el XML:', error);
-        return of([]); // Devuelve un arreglo vacío en caso de error
+        console.error('Error al cargar productos:', error);
+        return of([]); // Retorna un arreglo vacío en caso de error
       })
     );
   }
 
   obtenerProductos(): Observable<Producto[]> {
-    return of(this.productos); // Devuelve los productos en memoria
+    return this.productos$; // Retorna el Observable del BehaviorSubject
   }
 
-  agregarProducto(producto: Producto): void {
-    producto.id = this.productos.length + 1; // Asignar un nuevo ID
-    this.productos.push(producto); // Agregar el producto al arreglo en memoria
-    this.actualizarXML(); // Simular la actualización del XML
+  agregarProducto(producto: Producto): Observable<Producto> {
+    return this.http.post<Producto>(this.apiUrl, producto).pipe(
+      map((nuevoProducto) => {
+        const productosActuales = this.productosSubject.value;
+        this.productosSubject.next([...productosActuales, nuevoProducto]); // Actualiza el BehaviorSubject
+        return nuevoProducto;
+      }),
+      catchError((error) => {
+        console.error('Error al agregar producto:', error);
+        throw error;
+      })
+    );
   }
 
-  modificarProducto(id: number, productoActualizado: Producto): void {
-    const index = this.productos.findIndex(p => p.id === id);
-    if (index !== -1) {
-      this.productos[index] = { ...productoActualizado, id }; // Actualizar el producto
-      this.actualizarXML(); // Simular la actualización del XML
-    }
+  modificarProducto(id: number, productoActualizado: Producto): Observable<Producto> {
+    const url = `${this.apiUrl}/${id}`;
+    return this.http.put<Producto>(url, productoActualizado).pipe(
+      map((producto) => {
+        const productosActuales = this.productosSubject.value;
+        const index = productosActuales.findIndex(p => p.id === id);
+        if (index !== -1) {
+          productosActuales[index] = producto;
+          this.productosSubject.next([...productosActuales]); // Actualiza el BehaviorSubject
+        }
+        return producto;
+      }),
+      catchError((error) => {
+        console.error('Error al modificar producto:', error);
+        throw error;
+      })
+    );
   }
 
-  eliminarProducto(id: number): void {
-    this.productos = this.productos.filter(p => p.id !== id); // Filtrar y eliminar el producto
-    this.actualizarXML(); // Simular la actualización del XML
+  eliminarProducto(id: number): Observable<void> {
+    const url = `${this.apiUrl}/${id}`;
+    return this.http.delete<void>(url).pipe(
+      map(() => {
+        const productosActuales = this.productosSubject.value.filter(p => p.id !== id);
+        this.productosSubject.next([...productosActuales]); // Actualiza el BehaviorSubject
+      }),
+      catchError((error) => {
+        console.error('Error al eliminar producto:', error);
+        throw error;
+      })
+    );
   }
 
-  private actualizarXML(): void {
-    // Simular la actualización del XML generando un nuevo XML a partir del arreglo en memoria
-    const xmlString = this.generarXMLDesdeProductos(this.productos);
-    console.log('XML actualizado:', xmlString);
-  }
-
-  private generarXMLDesdeProductos(productos: Producto[]): string {
-    const xmlHeader = '<?xml version="1.0" encoding="UTF-8"?>';
-    const productosXML = productos.map(prod => `
-      <producto>
-        <id>${prod.id}</id>
-        <nombre>${prod.nombre}</nombre>
-        <preciop>${prod.preciop}</preciop>
-        <imagen>${prod.imagen}</imagen>
-        <cantidad>${prod.cantidad}</cantidad>
-      </producto>
-    `).join('');
-  
-    return `${xmlHeader}<productos>${productosXML}</productos>`;
-  }
-  
-  descargarXML(): void {
-    const xmlString = this.generarXMLDesdeProductos(this.productos);
-    const blob = new Blob([xmlString], { type: 'application/xml' });
-    const url = window.URL.createObjectURL(blob);
-  
-    // Crear un enlace temporal para la descarga
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'inventario.xml'; // Nombre del archivo
-    document.body.appendChild(a);
-    a.click(); // Simular clic en el enlace
-    document.body.removeChild(a); // Eliminar el enlace temporal
-    window.URL.revokeObjectURL(url); // Liberar el objeto URL
+  obtenerProductoPorId(id: number): Producto | undefined {
+    return this.productosSubject.value.find((p) => p.id === id);
   }
 }

@@ -1,0 +1,26 @@
+{
+    "productos": [
+      {
+        "id": 1,
+        "nombre": "Capacitor",
+        "precioP": 38.80,
+        "cantidad": 10,
+        "imagen": "assets/img/Capacitor.jpg"
+      },
+      {
+        "id": 2,
+        "nombre": "Resistencia",
+        "precioP": 0.80,
+        "cantidad": 15,
+        "imagen": "assets/img/Resistencia.jpg"
+      },
+      {
+        "id": 3,
+        "nombre": "Led",
+        "precioP": 319.00,
+        "cantidad": 5,
+        "imagen": "assets/img/led.jpg"
+      }
+      
+    ]
+  }

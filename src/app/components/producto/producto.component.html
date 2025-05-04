@@ -1,12 +1,16 @@
-<!DOCTYPE html>
-<h2>Catálogo de Productos</h2>
-<div class="productos">
+<div class="productos-container">
+  <p>CETRIONIC digital</p>
+  <h2>Catálogo de Productos</h2>
+  <div class="productos-lista">
     <div *ngFor="let producto of productos" class="producto">
-        <img [src]="producto.imagen" alt="">
-        <h3>{{producto.nombre}}</h3>
-        <p>Precio: ${{producto.preciop}}</p>
-        <button (click)="agregarAlCarrito(producto)">Agregar al carrito</button>
+      <img [src]="producto.imagen" alt="{{ producto.nombre }}" />
+      <h3>{{ producto.nombre }}</h3>
+      <p>Precio: {{ producto.precioP }}</p>
+      <button (click)="agregarAlCarrito(producto)">Agregar al carrito</button>
     </div>
+  </div>
+  <div class="botones-navegacion">
+    <button (click)="irAlCarrito()">Ir al Carrito</button>
+    <button (click)="irAlInventario()">Ir al Inventario</button>
+  </div>
 </div>
-<button (click)="irAlCarrito()">Ir al Carrito</button>
-<button (click)="irAlInventario()">Ir al Inventario</button>
