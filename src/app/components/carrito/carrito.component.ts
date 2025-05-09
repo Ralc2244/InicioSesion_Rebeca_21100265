@@ -1,40 +1,68 @@
 import { Component, OnInit } from '@angular/core';
 import { CarritoService } from '../../services/carrito.service';
-import { CommonModule } from '@angular/common';
 import { Producto } from '../../models/producto';
+import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+
+
+declare var paypal: any;
 
 @Component({
   selector: 'app-carrito',
-  standalone: true,
   imports: [CommonModule],
   templateUrl: './carrito.component.html',
   styleUrls: ['./carrito.component.css']
 })
 export class CarritoComponent implements OnInit {
   carrito: Producto[] = [];
+  mostrarBotonPayPal = false;
 
-  constructor(private carritoService: CarritoService) {}
+  constructor(
+    private carritoService: CarritoService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.carrito = this.carritoService.obtenerCarrito();
+    this.cargarPayPal();
+  }
+
+  cargarPayPal(): void {
+    if (this.carrito.length > 0) {
+      const script = document.createElement('script');
+      script.src = `https://www.paypal.com/sdk/js?client-id=AdF8qiECkFrIXtYJBzfWXyyvI2uHOp2T11yFMJjM7tcwu2wEx9B4sMpmqUse_0wFEhewG-6vSQr-iQsB&currency=MXN`;
+      script.onload = () => this.renderPayPalButton();
+      document.body.appendChild(script);
+    }
+  }
+
+  renderPayPalButton(): void {
+    paypal.Buttons({
+      createOrder: (data: any, actions: any) => {
+        return fetch('http://localhost:3000/api/paypal/create-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            total: this.calcularTotal().toFixed(2),
+            items: this.carrito
+          })
+        }).then(res => res.json()).then(order => order.id);
+      },
+      onApprove: (data: any, actions: any) => {
+        return fetch(`http://localhost:3000/api/paypal/capture-order/${data.orderID}`, {
+          method: 'POST'
+        }).then(res => res.json()).then(details => {
+          this.router.navigate(['/pago-completado']);
+        });
+      }
+    }).render('#paypal-button-container');
   }
 
   eliminarProducto(index: number): void {
     this.carritoService.eliminarProducto(index);
-  }
-
-  actualizarCantidad(productoId: number, event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const nuevaCantidad = parseInt(input.value, 10);
-
-    if (this.carritoService.actualizarCantidad(productoId, nuevaCantidad)) {
-      console.log('Cantidad actualizada');
-    } else {
-      const producto = this.carrito.find((p) => p.id === productoId);
-      if (producto) {
-        input.value = producto.cantidad.toString();
-      }
-      alert('No hay suficiente stock o la cantidad no es válida.');
+    this.carrito = this.carritoService.obtenerCarrito();
+    if (this.carrito.length === 0) {
+      document.getElementById('paypal-button-container')!.innerHTML = '';
     }
   }
 
@@ -42,29 +70,5 @@ export class CarritoComponent implements OnInit {
     return this.carrito.reduce((total, producto) => {
       return total + (producto.precioP * producto.cantidad);
     }, 0);
-  }
-
-  continuarPago(): void {
-    const total = this.calcularTotal();
-    fetch('http://localhost:3000/api/paypal/create-order', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ total })
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.url) {
-        window.location.href = data.url; // Redirige a PayPal
-      } else {
-        alert('Carrito vacío.');
-        console.error('Respuesta inesperada:', data);
-      }
-    })
-    .catch(err => {
-      console.error('Error al crear la orden de pago:', err);
-      alert('Hubo un error al intentar procesar el pago.');
-    });
   }
 }

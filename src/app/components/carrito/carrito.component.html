@@ -1,23 +1,26 @@
 <div class="carrito-container">
     <h2>Carrito de Compras</h2>
-    <div *ngIf="carrito.length > 0">
-      <ul class="carrito-lista">
-        <li *ngFor="let producto of carrito; let i = index" class="carrito-item">
-          <img [src]="producto.imagen" alt="{{ producto.nombre }}" />
-          <div class="carrito-item-info">
-            {{ producto.nombre }} - ${{ producto.precioP }}
-          </div>
-          <input
-            type="number"
-            [value]="producto.cantidad"
-            (change)="actualizarCantidad(producto.id, $event)"
-            min="1"
-            [max]="producto.cantidad"
-          />
-          <button class="btn-eliminar" (click)="eliminarProducto(i)">Eliminar</button>
-        </li>
-      </ul>
+    
+    <div *ngIf="carrito.length > 0; else carritoVacio">
+      <div class="producto-item" *ngFor="let producto of carrito; let i = index">
+        <img [src]="producto.imagen" [alt]="producto.nombre">
+        <div class="producto-info">
+          <h3>{{ producto.nombre }}</h3>
+          <p>Precio: ${{ producto.precioP }}</p>
+          <p>Cantidad: {{ producto.cantidad }}</p>
+        </div>
+        <button class="btn-eliminar" (click)="eliminarProducto(i)">
+          <i class="fas fa-trash"></i> Eliminar
+        </button>
+      </div>
+  
+      <div class="total-section">
+        <h3>Total: ${{ calcularTotal() | number}}</h3>
+        <div id="paypal-button-container"></div>
+      </div>
     </div>
-    <button class="btn-paypal" (click)="continuarPago()">Pagar con PayPal</button>
-    <p *ngIf="carrito.length === 0" class="carrito-vacio">El carrito está vacío</p>
+  
+    <ng-template #carritoVacio>
+      <p class="empty-cart">Tu carrito está vacío</p>
+    </ng-template>
   </div>

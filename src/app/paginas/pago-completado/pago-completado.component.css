@@ -1,61 +1,71 @@
-.confirmacion-container {
-  max-width: 500px;
+/* Estilo principal del contenedor */
+.pago-completado-container {
+  max-width: 600px;
   margin: 100px auto;
   padding: 40px;
   background-color: #fff;
+  color: #000;
   border: 2px solid #000;
   text-align: center;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   box-shadow: 5px 5px 0 #000;
 }
 
-.confirmacion-container h2 {
-  color: #000;
-  font-size: 28px;
-  margin-bottom: 20px;
-}
-
-.confirmacion-container p {
-  color: #333;
-  font-size: 18px;
+/* Estilo del mensaje de éxito */
+.success-message {
   margin-bottom: 30px;
 }
 
-.confirmacion-container button {
+.success-message i {
+  font-size: 40px;
+  color: green;
+  margin-bottom: 15px;
+}
+
+.success-message h2 {
+  font-size: 28px;
+  color: #000;
+  margin-bottom: 10px;
+}
+
+.success-message p {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+/* Estilo de los botones */
+.actions {
+  margin-top: 30px;
+}
+
+.btn-descargar {
   background-color: #000;
   color: #fff;
   padding: 12px 24px;
+  font-size: 16px;
   border: none;
-  font-size: 16px;
   cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.confirmacion-container button:hover {
-  background-color: #fff;
-  color: #000;
-  border: 2px solid #000;
-}
-
-.btn-descargar,
-.btn-volver {
-  display: block;
-  width: 100%;
-  padding: 14px;
-  font-size: 16px;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   text-transform: uppercase;
-  border: 2px solid #000;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin-top: 20px;
-  background-color: #000;
-  color: #fff;
-  box-shadow: 4px 4px 0 #000;
+  letter-spacing: 1px;
 }
 
-.btn-descargar:hover,
-.btn-volver:hover {
+.btn-descargar i {
+  margin-right: 10px;
+}
+
+.btn-descargar:hover {
   background-color: #fff;
   color: #000;
+  border: 2px solid #000;
   box-shadow: none;
+}
+
+.btn-descargar:focus {
+  outline: none;
+  border: 2px solid #000;
 }
