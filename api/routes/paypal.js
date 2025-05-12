@@ -140,6 +140,7 @@ router.get('/check-payment/:orderId', async (req, res) => {
 });
 
 // Ruta para capturar el pago (debe ser llamada después de que el usuario complete el pago)
+// Ruta para capturar el pago (debe ser llamada después de que el usuario complete el pago)
 router.post('/capture-order/:orderId', async (req, res) => {
   const { orderId } = req.params;
 
@@ -158,14 +159,32 @@ router.post('/capture-order/:orderId', async (req, res) => {
       }
     );
 
-    res.json({
-      status: response.data.status,
-      capture_id: response.data.purchase_units[0]?.payments?.captures[0]?.id,
-      details: response.data,
-    });
+    // Verificar si el pago fue capturado correctamente
+    if (response.data.status === 'COMPLETED') {
+      // Actualizar la cantidad de cada producto basado en lo que se haya comprado
+      const items = response.data.purchase_units[0]?.items || [];
+      for (const item of items) {
+        const productoId = item.sku;  // Suponiendo que el SKU sea el ID del producto en la base de datos
+        const cantidadComprada = item.quantity;
+
+        // Actualizar la base de datos para disminuir la cantidad
+        await pool.query('UPDATE productos SET cantidad = cantidad - ? WHERE id = ?', [cantidadComprada, productoId]);
+      }
+
+      // Devolver respuesta con éxito
+      res.json({
+        status: response.data.status,
+        capture_id: response.data.purchase_units[0]?.payments?.captures[0]?.id,
+        details: response.data,
+      });
+    } else {
+      throw new Error('Pago no capturado exitosamente');
+    }
+
   } catch (error) {
     handlePayPalError(error, res);
   }
 });
+
 
 module.exports = router;

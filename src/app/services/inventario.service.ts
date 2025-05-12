@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject, of } from 'rxjs';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { Producto } from '../models/producto';
 
@@ -8,82 +8,84 @@ import { Producto } from '../models/producto';
   providedIn: 'root'
 })
 export class InventarioService {
-  private apiUrl = 'http://localhost:3000/api/productos'; // Endpoint de JSON Server
-  private productosSubject = new BehaviorSubject<Producto[]>([]);
-  productos$ = this.productosSubject.asObservable();
+  private apiUrl = 'http://localhost:3000/api/productos';
+  private headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+  });
 
-  constructor(private http: HttpClient) {
-    this.cargarProductosDesdeBackend().subscribe({
-      next: (productos) => {
-        this.productosSubject.next(productos); // Actualiza el BehaviorSubject
-      },
-      error: (error) => {
-        console.error('Error al cargar productos:', error);
-      }
-    });
-  }
+  constructor(private http: HttpClient) {}
 
-  private cargarProductosDesdeBackend(): Observable<Producto[]> {
-    return this.http.get<Producto[]>(this.apiUrl).pipe(
-      catchError((error) => {
-        console.error('Error al cargar productos:', error);
-        return of([]); // Retorna un arreglo vacío en caso de error
-      })
-    );
-  }
-
+  /**
+   * Obtiene todos los productos
+   */
   obtenerProductos(): Observable<Producto[]> {
-    return this.productos$; // Retorna el Observable del BehaviorSubject
+    return this.http.get<{success: boolean, data: Producto[]}>(this.apiUrl, { headers: this.headers })
+      .pipe(
+        map(response => response.data),
+        catchError(this.handleError)
+      );
   }
 
+  /**
+   * Obtiene un producto por su ID
+   */
+  obtenerProductoPorId(id: number): Observable<Producto> {
+    return this.http.get<{success: boolean, data: Producto}>(`${this.apiUrl}/${id}`, { headers: this.headers })
+      .pipe(
+        map(response => response.data),
+        catchError(this.handleError)
+      );
+  }
+
+  /**
+   * Agrega un nuevo producto
+   */
   agregarProducto(producto: Producto): Observable<Producto> {
-    return this.http.post<Producto>(this.apiUrl, producto).pipe(
-      map((nuevoProducto) => {
-        const productosActuales = this.productosSubject.value;
-        this.productosSubject.next([...productosActuales, nuevoProducto]); // Actualiza el BehaviorSubject
-        return nuevoProducto;
-      }),
-      catchError((error) => {
-        console.error('Error al agregar producto:', error);
-        throw error;
-      })
-    );
+    return this.http.post<{success: boolean, data: Producto}>(this.apiUrl, producto, { headers: this.headers })
+      .pipe(
+        map(response => response.data),
+        catchError(this.handleError)
+      );
   }
 
-  modificarProducto(id: number, productoActualizado: Producto): Observable<Producto> {
-    const url = `${this.apiUrl}/${id}`;
-    return this.http.put<Producto>(url, productoActualizado).pipe(
-      map((producto) => {
-        const productosActuales = this.productosSubject.value;
-        const index = productosActuales.findIndex(p => p.id === id);
-        if (index !== -1) {
-          productosActuales[index] = producto;
-          this.productosSubject.next([...productosActuales]); // Actualiza el BehaviorSubject
+  modificarProducto(id: number, producto: Producto): Observable<Producto> {
+  return this.http.put<{ success: boolean, data: Producto }>(`${this.apiUrl}/${id}`, producto, { headers: this.headers })
+    .pipe(
+      map(response => response.data),
+      catchError(this.handleError)
+    );
+}
+
+  /**
+   * Elimina un producto
+   */
+  eliminarProducto(id: number): Observable<any> {
+  return this.http.delete(`${this.apiUrl}/${id}`, { headers: this.headers })
+    .pipe(
+      catchError(err => {
+        console.error('Error al eliminar producto:', err);
+        // Agregar una validación para capturar los errores de tipo 404
+        if (err.status === 404) {
+          return throwError(() => new Error('Producto no encontrado.'));
+        } else {
+          return throwError(() => new Error('Error del servidor.'));
         }
-        return producto;
-      }),
-      catchError((error) => {
-        console.error('Error al modificar producto:', error);
-        throw error;
       })
     );
-  }
+}
 
-  eliminarProducto(id: number): Observable<void> {
-    const url = `${this.apiUrl}/${id}`;
-    return this.http.delete<void>(url).pipe(
-      map(() => {
-        const productosActuales = this.productosSubject.value.filter(p => p.id !== id);
-        this.productosSubject.next([...productosActuales]); // Actualiza el BehaviorSubject
-      }),
-      catchError((error) => {
-        console.error('Error al eliminar producto:', error);
-        throw error;
-      })
-    );
-  }
 
-  obtenerProductoPorId(id: number): Producto | undefined {
-    return this.productosSubject.value.find((p) => p.id === id);
+  /**
+   * Manejo centralizado de errores
+   */
+  private handleError(error: HttpErrorResponse) {
+    if (error.error instanceof ErrorEvent) {
+      console.error('Error del cliente:', error.error.message);
+      return throwError(() => new Error('Error de comunicación con el servidor'));
+    }
+    
+    console.error(`Código de error: ${error.status}, Mensaje: ${error.message}`);
+    return throwError(() => new Error('Error del servidor'));
   }
 }

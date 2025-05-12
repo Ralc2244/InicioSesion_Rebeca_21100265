@@ -1,21 +1,193 @@
-.form {
-  margin-bottom: 20px;
+/* inventario.component.css */
+
+/* Contenedor principal */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
 }
 
-.productos {
-  display: flex;
-  flex-wrap: wrap;
+/* Estilos para las notificaciones */
+.notification {
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  text-align: center;
+  font-weight: bold;
+  background-color: #f2f2f2;
+  color: #333;
+}
+
+.notification.success {
+  border-left: 5px solid #4caf50;
+}
+
+.notification.error {
+  border-left: 5px solid #f44336;
+}
+
+/* Indicador de carga */
+.loading-indicator {
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #888;
+  margin: 20px 0;
+}
+
+/* Título principal */
+h2 {
+  font-size: 2em;
+  margin-bottom: 30px;
+  text-align: center;
+  color: #000;
+}
+
+/* Formulario de agregar producto */
+.form-container {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 40px;
+  border: 1px solid #ddd;
+}
+
+.form-container h3 {
+  margin-bottom: 20px;
+  font-size: 1.5em;
+  color: #000;
+}
+
+/* Estilo de los inputs del formulario */
+form input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1em;
+  color: #333;
+  background-color: #f9f9f9;
+}
+
+form input:focus {
+  border-color: #000;
+  background-color: #fff;
+  outline: none;
+}
+
+/* Botón de agregar producto */
+form button {
+  background-color: #333;
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+form button:hover {
+  background-color: #555;
+}
+
+/* Lista de productos */
+.productos-container {
+  margin-top: 20px;
+}
+
+.productos-container h3 {
+  margin-bottom: 20px;
+  font-size: 1.5em;
+  color: #000;
+}
+
+.empty-message {
+  text-align: center;
+  font-size: 1.2em;
+  color: #888;
+}
+
+/* Estilo de las tarjetas de productos */
+.productos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 20px;
 }
 
-.producto {
-  border: 1px solid #ccc;
-  padding: 10px;
-  width: 200px;
+.producto-card {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   text-align: center;
+  border: 1px solid #ddd;
 }
 
-.producto img {
-  max-width: 100%;
+.producto-card img {
+  width: 100%;
   height: auto;
+  border-radius: 8px;
+}
+
+.producto-card h4 {
+  margin-top: 15px;
+  font-size: 1.3em;
+  color: #333;
+}
+
+.producto-card p {
+  font-size: 1em;
+  color: #555;
+}
+
+/* Botones de acción */
+.producto-actions {
+  margin-top: 20px;
+}
+
+.producto-actions button {
+  background-color: #f44336;
+  color: white;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.producto-actions button:hover {
+  background-color: #d32f2f;
+}
+
+/* Estilos para el formulario de edición */
+.form-actions {
+  margin-top: 20px;
+}
+
+.form-actions button {
+  background-color: #333;
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.form-actions button[type="button"] {
+  background-color: #f1f1f1;
+  color: #333;
+  margin-left: 10px;
+  padding: 12px 25px;
+}
+
+.form-actions button:hover {
+  background-color: #555;
+}
+
+.form-actions button[type="button"]:hover {
+  background-color: #ddd;
 }

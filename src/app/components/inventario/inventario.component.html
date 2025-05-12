@@ -1,33 +1,64 @@
-<h2>Inventario</h2>
-
-<!-- Formulario para agregar productos -->
-<div class="form">
-  <input type="text" [(ngModel)]="nuevoProducto.nombre" placeholder="Nombre del producto">
-  <input type="number" [(ngModel)]="nuevoProducto.precioP" placeholder="Precio">
-  <input type="text" [(ngModel)]="nuevoProducto.imagen" placeholder="URL de imagen">
-  <input type="number" [(ngModel)]="nuevoProducto.cantidad" placeholder="Cantidad">
-  <button (click)="agregarProducto()">Agregar Producto</button>
-</div>
-
-<!-- Lista de productos en inventario -->
-<div class="productos">
-  <div *ngFor="let producto of productos" class="producto">
-    <img [src]="producto.imagen" alt="{{ producto.nombre }}">
-    <h3>{{ producto.nombre }}</h3>
-    <p>Precio: ${{ producto.precioP }}</p>
-    <p>Cantidad: {{ producto.cantidad }}</p>
-    <button (click)="editarProducto(producto)">Editar</button>
-    <button (click)="eliminarProducto(producto.id)">Eliminar</button>
+<!-- inventario.component.html -->
+<div class="container">
+  <!-- Notificación -->
+  <div *ngIf="mostrarNotificacion" class="notification {{tipoNotificacion}}">
+    {{ mensajeNotificacion }}
   </div>
-</div>
 
-<!-- Formulario de edición -->
-<div *ngIf="productoSeleccionado" class="form">
-  <h2>Editar Producto</h2>
-  <input type="text" [(ngModel)]="productoSeleccionado.nombre" placeholder="Nombre del producto">
-  <input type="number" [(ngModel)]="productoSeleccionado.precioP" placeholder="Precio">
-  <input type="text" [(ngModel)]="productoSeleccionado.imagen" placeholder="URL de imagen">
-  <input type="number" [(ngModel)]="productoSeleccionado.cantidad" placeholder="Cantidad">
-  <button (click)="guardarCambios()">Guardar Cambios</button>
-  <button (click)="cancelarEdicion()">Cancelar</button>
+  <!-- Indicador de carga -->
+  <div *ngIf="cargando" class="loading-indicator">
+    Cargando...
+  </div>
+
+  <h2>Inventario</h2>
+
+  <!-- Formulario para agregar productos -->
+  <div class="form-container">
+    <h3>Agregar Nuevo Producto</h3>
+    <form (ngSubmit)="agregarProducto()">
+      <input type="text" [(ngModel)]="nuevoProducto.nombre" name="nombre" placeholder="Nombre" required>
+      <input type="number" [(ngModel)]="nuevoProducto.precioP" name="precioP" placeholder="Precio" min="0" required>
+      <input type="text" [(ngModel)]="nuevoProducto.imagen" name="imagen" placeholder="URL de imagen" required>
+      <input type="number" [(ngModel)]="nuevoProducto.cantidad" name="cantidad" placeholder="Cantidad" min="0" required>
+      <button type="submit" [disabled]="cargando">Agregar Producto</button>
+    </form>
+  </div>
+
+  <!-- Lista de productos -->
+  <div class="productos-container">
+    <h3>Productos en Inventario</h3>
+    <div *ngIf="productos.length === 0 && !cargando" class="empty-message">
+      No hay productos en el inventario
+    </div>
+    
+    <div class="productos-grid">
+      <div *ngFor="let producto of productos" class="producto-card">
+        <img [src]="producto.imagen" [alt]="producto.nombre">
+        <h4>{{ producto.nombre }}</h4>
+        <p><strong>Precio:</strong> ${{ producto.precioP | number }}</p>
+        <p><strong>Cantidad:</strong> {{ producto.cantidad }}</p>
+        
+        <div class="producto-actions">
+          <button (click)="editarProducto(producto)">Editar</button>
+          <button (click)="eliminarProducto(producto.id)" class="delete">Eliminar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formulario de edición -->
+  <div *ngIf="productoSeleccionado" class="form-container">
+    <h3>Editar Producto</h3>
+    <form (ngSubmit)="guardarCambios()">
+      <input type="text" [(ngModel)]="productoSeleccionado.nombre" name="nombreEdicion" placeholder="Nombre" required>
+      <input type="number" [(ngModel)]="productoSeleccionado.precioP" name="precioPEdicion" placeholder="Precio" min="0" required>
+      <input type="text" [(ngModel)]="productoSeleccionado.imagen" name="imagenEdicion" placeholder="URL de imagen" required>
+      <input type="number" [(ngModel)]="productoSeleccionado.cantidad" name="cantidadEdicion" placeholder="Cantidad" min="0" required>
+      
+      <div class="form-actions">
+        <button type="submit" [disabled]="cargando">Guardar Cambios</button>
+        <button type="button" (click)="cancelarEdicion()">Cancelar</button>
+      </div>
+    </form>
+  </div>
 </div>
