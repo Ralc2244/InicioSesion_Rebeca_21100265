@@ -4,7 +4,6 @@ import { Producto } from '../../models/producto';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
-
 declare var paypal: any;
 
 @Component({
@@ -16,6 +15,7 @@ declare var paypal: any;
 export class CarritoComponent implements OnInit {
   carrito: Producto[] = [];
   mostrarBotonPayPal = false;
+  ivaPorcentaje = 0.16; // 16% de IVA (ajustable)
 
   constructor(
     private carritoService: CarritoService,
@@ -30,7 +30,7 @@ export class CarritoComponent implements OnInit {
   cargarPayPal(): void {
     if (this.carrito.length > 0) {
       const script = document.createElement('script');
-      script.src = `https://www.paypal.com/sdk/js?client-id=AdF8qiECkFrIXtYJBzfWXyyvI2uHOp2T11yFMJjM7tcwu2wEx9B4sMpmqUse_0wFEhewG-6vSQr-iQsB&currency=MXN`;
+      script.src = 'https://www.paypal.com/sdk/js?client-id=AdF8qiECkFrIXtYJBzfWXyyvI2uHOp2T11yFMJjM7tcwu2wEx9B4sMpmqUse_0wFEhewG-6vSQr-iQsB&currency=MXN';
       script.onload = () => this.renderPayPalButton();
       document.body.appendChild(script);
     }
@@ -58,6 +58,26 @@ export class CarritoComponent implements OnInit {
     }).render('#paypal-button-container');
   }
 
+  aumentarCantidad(index: number): void {
+    this.carritoService.aumentarCantidad(index);
+    this.carrito = this.carritoService.obtenerCarrito();
+    this.actualizarPayPal();
+  }
+
+  disminuirCantidad(index: number): void {
+    this.carritoService.disminuirCantidad(index);
+    this.carrito = this.carritoService.obtenerCarrito();
+    this.actualizarPayPal();
+  }
+
+  private actualizarPayPal(): void {
+    const container = document.getElementById('paypal-button-container');
+    if (container) {
+      container.innerHTML = '';
+      this.cargarPayPal();
+    }
+  }
+
   eliminarProducto(index: number): void {
     this.carritoService.eliminarProducto(index);
     this.carrito = this.carritoService.obtenerCarrito();
@@ -66,9 +86,17 @@ export class CarritoComponent implements OnInit {
     }
   }
 
-  calcularTotal(): number {
+  calcularSubtotal(): number {
     return this.carrito.reduce((total, producto) => {
-      return total + (producto.precioP * producto.cantidad);
+      return total + (producto.precioP * (producto.cantidad || 1));
     }, 0);
+  }
+
+  calcularIVA(): number {
+    return this.calcularSubtotal() * this.ivaPorcentaje;
+  }
+
+  calcularTotal(): number {
+    return this.calcularSubtotal() + this.calcularIVA();
   }
 }

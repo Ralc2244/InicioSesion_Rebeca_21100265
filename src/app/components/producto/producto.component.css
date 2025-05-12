@@ -50,7 +50,7 @@
 
 /* Botón de agregar */
 .producto button {
-  background-color: #000;
+  background-color: #4caf50; /* Verde */
   color: #fff;
   border: none;
   padding: 10px 12px;
@@ -62,7 +62,7 @@
 }
 
 .producto button:hover {
-  background-color: #444;
+  background-color: #45a049; /* Verde más oscuro al pasar el mouse */
 }
 
 /* Botones de navegación */
@@ -74,9 +74,9 @@
 }
 
 .botones-navegacion button {
-  background-color: #000;
+  background-color: blue; /* Verde */
   color: #fff;
-  border: 1px solid #000;
+  border: 1px solid blue;
   padding: 10px 15px;
   border-radius: 5px;
   font-weight: bold;
@@ -86,5 +86,28 @@
 
 .botones-navegacion button:hover {
   background-color: #fff;
-  color: #000;
+  color: #4caf50;
+}
+
+/* Estilos para el buscador */
+.buscador-container {
+  margin: 20px auto;
+  max-width: 500px;
+  width: 100%;
+}
+
+.buscador-input {
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid #000;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+/* Mensaje cuando no hay resultados */
+.mensaje-no-resultados {
+  text-align: center;
+  width: 100%;
+  margin-top: 20px;
+  font-style: italic;
 }

@@ -1,15 +1,32 @@
 <div class="productos-container">
   <p>CETRIONIC digital</p>
   <h2>Catálogo de Productos</h2>
+  
+  <!-- Campo de búsqueda -->
+  <div class="buscador-container">
+    <input 
+      type="text" 
+      [(ngModel)]="terminoBusqueda" 
+      (input)="filtrarProductos()"
+      placeholder="Buscar productos..."
+      class="buscador-input"
+    />
+  </div>
+  
   <div class="productos-lista">
-    <div *ngFor="let producto of productos" class="producto">
+    <!-- Mostrar los productos filtrados -->
+    <div *ngFor="let producto of productosFiltrados" class="producto">
       <img [src]="producto.imagen" alt="{{ producto.nombre }}" />
       <h3>{{ producto.nombre }}</h3>
-      <p>Precio: ${{ producto.precioP | number }}</p>
-      <p>Cantidad disponible: {{ producto.cantidad }}</p> <!-- Aquí agregamos la cantidad -->
+      <p>Precio: ${{ producto.precioP | number:'1.2-2' }}</p>
+      <p>Cantidad disponible: {{ producto.cantidad }}</p>
+      
+      <!-- Botón para agregar al carrito -->
       <button (click)="agregarAlCarrito(producto)">Agregar al carrito</button>
     </div>
   </div>
+  
+  <!-- Botones para navegación -->
   <div class="botones-navegacion">
     <button (click)="irAlCarrito()">Ir al Carrito</button>
     <button (click)="irAlInventario()">Ir al Inventario</button>

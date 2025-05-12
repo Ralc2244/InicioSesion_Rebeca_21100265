@@ -140,7 +140,6 @@ router.get('/check-payment/:orderId', async (req, res) => {
 });
 
 // Ruta para capturar el pago (debe ser llamada después de que el usuario complete el pago)
-// Ruta para capturar el pago (debe ser llamada después de que el usuario complete el pago)
 router.post('/capture-order/:orderId', async (req, res) => {
   const { orderId } = req.params;
 
@@ -167,6 +166,9 @@ router.post('/capture-order/:orderId', async (req, res) => {
         const productoId = item.sku;  // Suponiendo que el SKU sea el ID del producto en la base de datos
         const cantidadComprada = item.quantity;
 
+        // Log para verificar si el SKU y la cantidad son correctos
+        console.log('Actualizando producto:', productoId, 'Cantidad comprada:', cantidadComprada);
+
         // Actualizar la base de datos para disminuir la cantidad
         await pool.query('UPDATE productos SET cantidad = cantidad - ? WHERE id = ?', [cantidadComprada, productoId]);
       }
@@ -185,6 +187,6 @@ router.post('/capture-order/:orderId', async (req, res) => {
     handlePayPalError(error, res);
   }
 });
-
+    
 
 module.exports = router;

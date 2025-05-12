@@ -46,7 +46,7 @@
 
 /* Botón de eliminar */
 .btn-eliminar {
-  background-color: #fff;
+  background-color: #e9efe9;
   color: #000;
   border: 2px solid #000;
   padding: 6px 14px;
@@ -59,7 +59,7 @@
 }
 
 .btn-eliminar:hover {
-  background-color: #000;
+  background-color: #0afc4b;
   color: #fff;
 }
 
@@ -112,4 +112,77 @@
   background-color: #fff;
   color: #000;
   border: 2px solid #000;
+}
+
+/* ... (estilos existentes) ... */
+
+/* Estilos para el resumen de compra */
+.resumen-compra {
+  margin-top: 30px;
+  border-top: 2px solid #000;
+  padding-top: 20px;
+}
+
+.resumen-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.resumen-item.total {
+  font-weight: bold;
+  font-size: 18px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed #000;
+}
+
+/* Ajustar el contenedor de PayPal */
+#paypal-button-container {
+  margin-top: 20px;
+}
+
+/* ... (estilos existentes) ... */
+
+/* Estilos para los controles de cantidad */
+.cantidad-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.cantidad-control button {
+  background-color: #000;
+  color: white;
+  border: none;
+  width: 30px;
+  height: 30px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cantidad-control button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.cantidad-control button:hover:not(:disabled) {
+  background-color: #333;
+}
+
+.cantidad-control span {
+  min-width: 30px;
+  text-align: center;
+}
+
+/* Ajustar el precio total por producto */
+.producto-info p:last-child {
+  font-weight: bold;
+  margin-top: 5px;
 }

@@ -90,13 +90,19 @@ export class CarritoService {
     window.URL.revokeObjectURL(url);
   }
 
-  private calcularTotal(): number {
-    return this.carrito.reduce((total, producto) => {
-      return total + (producto.precioP * producto.cantidad);
-    }, 0);
-  }
-
   private guardarCarrito(): void {
     localStorage.setItem('carrito', JSON.stringify(this.carrito));
+  }
+
+  aumentarCantidad(index: number): void {
+    if (this.carrito[index]) {
+      this.carrito[index].cantidad = (this.carrito[index].cantidad || 1) + 1;
+    }
+  }
+
+  disminuirCantidad(index: number): void {
+    if (this.carrito[index] && this.carrito[index].cantidad > 1) {
+      this.carrito[index].cantidad -= 1;
+    }
   }
 }

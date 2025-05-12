@@ -6,21 +6,38 @@
         <img [src]="producto.imagen" [alt]="producto.nombre">
         <div class="producto-info">
           <h3>{{ producto.nombre }}</h3>
-          <p>Precio: ${{ producto.precioP }}</p>
-          <p>Cantidad: {{ producto.cantidad }}</p>
+          <p>Precio unitario: ${{ producto.precioP | number:'1.2-2' }}</p>
+          <div class="cantidad-control">
+            <button (click)="disminuirCantidad(i)" [disabled]="producto.cantidad <= 1">-</button>
+            <span>{{ producto.cantidad || 1 }}</span>
+            <button (click)="aumentarCantidad(i)">+</button>
+          </div>
+          <p>Total producto: ${{ (producto.precioP * (producto.cantidad || 1)) | number:'1.2-2' }}</p>
         </div>
         <button class="btn-eliminar" (click)="eliminarProducto(i)">
           <i class="fas fa-trash"></i> Eliminar
         </button>
       </div>
   
-      <div class="total-section">
-        <h3>Total: ${{ calcularTotal() | number}}</h3>
-        <div id="paypal-button-container"></div>
+       <div class="resumen-compra">
+        <div class="resumen-item">
+          <span>Subtotal:</span>
+          <span>${{ calcularSubtotal() | number:'1.2-2' }}</span>
+        </div>
+        <div class="resumen-item">
+          <span>IVA (16%):</span>
+          <span>${{ calcularIVA() | number:'1.2-2' }}</span>
+        </div>
+        <div class="resumen-item total">
+          <span>Total:</span>
+          <span>${{ calcularTotal() | number:'1.2-2' }}</span>
+        </div>
       </div>
+      
+      <div id="paypal-button-container"></div>
     </div>
   
     <ng-template #carritoVacio>
       <p class="empty-cart">Tu carrito está vacío</p>
     </ng-template>
-  </div>
+</div>

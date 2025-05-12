@@ -43,18 +43,6 @@ pool.on('connection', (connection) => {
   console.debug('Nueva conexión establecida con MySQL');
 });
 
-pool.on('acquire', (connection) => {
-  console.log('Conexión adquirida del pool');
-});
-
-pool.on('release', (connection) => {
-  console.log('Conexión liberada al pool');
-});
-
-pool.on('enqueue', () => {
-  console.warn('Solicitud de conexión en cola (todas las conexiones en uso)');
-});
-
 // Exportar el pool con promesas y funciones adicionales
 module.exports = {
   pool: promisePool,

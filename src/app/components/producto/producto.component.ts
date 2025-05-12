@@ -1,4 +1,3 @@
-// producto.component.ts
 import { Component, OnInit } from '@angular/core';
 import { Producto } from '../../models/producto';
 import { ProductoService } from '../../services/producto.service';
@@ -6,16 +5,19 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { CarritoService } from '../../services/carrito.service';
 import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms'; // Importar FormsModule para ngModel
 
 @Component({
   selector: 'app-producto',
   standalone: true,
-  imports: [CommonModule, HttpClientModule],
+  imports: [CommonModule, HttpClientModule, FormsModule], // Añadir FormsModule
   templateUrl: './producto.component.html',
   styleUrls: ['./producto.component.css']
 })
 export class ProductoComponent implements OnInit {
   productos: Producto[] = [];
+  productosFiltrados: Producto[] = [];
+  terminoBusqueda: string = '';
 
   constructor(
     private productoService: ProductoService,
@@ -30,16 +32,13 @@ export class ProductoComponent implements OnInit {
   cargarProductos(): void {
     this.productoService.obtenerProductos().subscribe({
       next: (response) => {
-        // Si la respuesta es directamente el array
         if (Array.isArray(response)) {
           this.productos = response;
-        } 
-        // Si la respuesta tiene un wrapper con propiedad 'data'
-        else if (response.data && Array.isArray(response.data)) {
+          this.productosFiltrados = [...this.productos];
+        } else if (response.data && Array.isArray(response.data)) {
           this.productos = response.data;
-        }
-        // Si la estructura es diferente
-        else {
+          this.productosFiltrados = [...this.productos];
+        } else {
           console.error('Estructura de respuesta inesperada:', response);
         }
       },
@@ -49,16 +48,29 @@ export class ProductoComponent implements OnInit {
     });
   }
 
+  filtrarProductos(): void {
+    if (!this.terminoBusqueda) {
+      this.productosFiltrados = [...this.productos];
+      return;
+    }
+    
+    this.productosFiltrados = this.productos.filter(producto =>
+      producto.nombre.toLowerCase().includes(this.terminoBusqueda.toLowerCase())
+    );
+  }
 
+  // Método para agregar al carrito
   agregarAlCarrito(producto: Producto): void {
     this.carritoService.agregarProducto(producto);
   }
 
+  // Redirigir al carrito
   irAlCarrito(): void {
     this.router.navigate(['/carrito']);
   }
 
+  // Redirigir al inventario
   irAlInventario(): void {
-    this.router.navigate(['/inventario']); 
+    this.router.navigate(['/inventario']);  
   }
 }
