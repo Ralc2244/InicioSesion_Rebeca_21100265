@@ -14,11 +14,13 @@ export class PagoCompletadoComponent {
   ) {}
 
   descargarFactura(): void {
-    const xml = this.carritoService.generarXML();
-    this.carritoService.descargarXML(xml);
-    this.carritoService.vaciarCarrito();
-    this.router.navigate(['/catalogo']);
-  }
+  const carritoActual = this.carritoService.obtenerCarrito(); // obtiene el carrito actual
+  const xml = this.carritoService.generarXML(carritoActual); // pasa el carrito como parámetro
+  this.carritoService.descargarXML(xml);
+  this.carritoService.vaciarCarrito();
+  this.router.navigate(['/catalogo']);
+}
+
 
   volverAlCatalogo(): void {
     this.carritoService.vaciarCarrito();

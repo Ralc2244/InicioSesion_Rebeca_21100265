@@ -17,7 +17,7 @@ export class CarritoService {
     const productoEnCarrito = this.carrito.find((p) => p.id === producto.id);
     if (productoEnCarrito) {
       // Si el producto ya está, aumentar la cantidad
-      productoEnCarrito.cantidad += 1;
+      productoEnCarrito.cantidad = (productoEnCarrito.cantidad || 1) + 1;
     } else {
       // Si no está, agregarlo con cantidad 1
       this.carrito.push({ ...producto, cantidad: 1 });
@@ -37,48 +37,50 @@ export class CarritoService {
     this.guardarCarrito();
   }
 
-  generarXML(): string {
-    let xml = `<?xml version="1.0" encoding="UTF-8"?>\n<recibo>\n`;
-    xml +=   `  <Factura>\n`;
-    xml +=     `    <Encabezado>\n`;
-    xml +=       `      <Emisor>\n`;
-    xml +=         `        <Nombre>CETRIONIC digital</Nombre>\n`;
-    xml +=         `        <RFC>21300652</RFC>\n`;
-    xml +=         `        <Domicilio>Ceti Colomos #12</Domicilio>\n`;
-    xml +=       `      </Emisor>\n`;
-    xml +=       `      <Receptor>\n`;
-    xml +=         `        <Nombre>Paola Ponce</Nombre>\n`;
-    xml +=       `      </Receptor>\n`;
-    xml +=       `      <Fecha>2021-10-12</Fecha>\n`;
-    xml +=       `      <NumFactura>19011901</NumFactura>\n`;
-    xml +=     `    </Encabezado>\n`;
-    xml +=     `    <Detalles>\n`;
-    
-    this.carrito.forEach((producto) => {
-      xml +=         `      <producto>\n`;
-      xml +=           `        <id>${producto.id}</id>\n`;
-      xml +=           `        <nombre>${producto.nombre}</nombre>\n`;
-      xml +=           `        <precio>${producto.precioP}</precio>\n`;
-      xml +=           `        <cantidad>${producto.cantidad}</cantidad>\n`;
-      xml +=         `      </producto>\n`;
-    });
-    
-    xml +=     `    </Detalles>\n`;
+  generarXML(productos: Producto[]): string {
+  let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<recibo>\n';
+  xml += '  <Factura>\n';
+  xml += '    <Encabezado>\n';
+  xml += '      <Emisor>\n';
+  xml += '        <Nombre>CETRIONIC digital</Nombre>\n';
+  xml += '        <RFC>21300652</RFC>\n';
+  xml += '        <Domicilio>Ceti Colomos #12</Domicilio>\n';
+  xml += '      </Emisor>\n';
+  xml += '      <Receptor>\n';
+  xml += '        <Nombre>Paola Ponce</Nombre>\n';
+  xml += '      </Receptor>\n';
+  xml += `      <Fecha>${new Date().toISOString().split('T')[0]}</Fecha>\n`;
+  xml += '      <NumFactura>19011901</NumFactura>\n';
+  xml += '    </Encabezado>\n';
+  xml += '    <Detalles>\n';
 
-    let subtotal = this.carrito.reduce((sum, producto) => sum + Number(producto.precioP) * producto.cantidad, 0);
-    let iva = subtotal * 0.16;
-    let total = subtotal + iva;
-    
-    xml +=     `    <Totales>\n`;
-    xml +=       `      <subtotal>${subtotal.toFixed(2)}</subtotal>\n`;
-    xml +=       `      <iva>${iva.toFixed(2)}</iva>\n`;
-    xml +=       `      <total>${total.toFixed(2)}</total>\n`;
-    xml +=     `    </Totales>\n`;
-    xml +=   `  </Factura>\n`;
-    xml += `</recibo>`;
-  
-    return xml;
-  }
+  productos.forEach((producto) => {
+    xml += '      <producto>\n';
+    xml += `        <id>${producto.id}</id>\n`;
+    xml += `        <nombre>${producto.nombre}</nombre>\n`;
+    xml += `        <precio>${producto.precioP}</precio>\n`;
+    xml += `        <cantidad>${producto.cantidad}</cantidad>\n`;
+    xml += '      </producto>\n';
+  });
+
+  xml += '    </Detalles>\n';
+
+  const subtotal = productos.reduce((sum, producto) => sum + Number(producto.precioP) * (producto.cantidad || 1), 0);
+  const iva = subtotal * 0.16;
+  const total = subtotal + iva;
+
+  xml += '    <Totales>\n';
+  xml += `      <subtotal>${subtotal.toFixed(2)}</subtotal>\n`;
+  xml += `      <iva>${iva.toFixed(2)}</iva>\n`;
+  xml += `      <total>${total.toFixed(2)}</total>\n`;
+  xml += '    </Totales>\n';
+
+  xml += '  </Factura>\n';
+  xml += '</recibo>';
+
+  return xml;
+}
+
 
   descargarXML(xml: string): void {
     const blob = new Blob([xml], { type: 'application/xml' });
@@ -97,12 +99,14 @@ export class CarritoService {
   aumentarCantidad(index: number): void {
     if (this.carrito[index]) {
       this.carrito[index].cantidad = (this.carrito[index].cantidad || 1) + 1;
+      this.guardarCarrito();
     }
   }
 
   disminuirCantidad(index: number): void {
-    if (this.carrito[index] && this.carrito[index].cantidad > 1) {
-      this.carrito[index].cantidad -= 1;
+    if (this.carrito[index] && (this.carrito[index].cantidad || 1) > 1) {
+      this.carrito[index].cantidad = (this.carrito[index].cantidad || 1) - 1;
+      this.guardarCarrito();
     }
   }
 }

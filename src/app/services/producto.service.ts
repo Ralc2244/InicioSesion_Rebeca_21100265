@@ -13,4 +13,8 @@ export class ProductoService {
   obtenerProductos(): Observable<any> {
     return this.http.get<any>(this.apiUrl);
   }
+  actualizarStock(productoId: number, nuevaCantidad: number): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${productoId}`, { cantidad: nuevaCantidad });
+  }
+
 }

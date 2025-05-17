@@ -13,15 +13,38 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Ruta: Actualizar el stock de productos después de la compra
+router.post('/actualizar-stock', async (req, res) => {
+  const productos = req.body.productos;
+
+  try {
+    for (const prod of productos) {
+      await pool.query(
+        'UPDATE productos SET cantidad = cantidad - ? WHERE id = ?',
+        [prod.cantidad, prod.id]
+      );
+    }
+
+    res.status(200).json({ success: true, message: 'Stock actualizado correctamente' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error al actualizar el stock', 
+      error: error.message 
+    });
+  }
+});
+
 // Ruta para obtener un producto por su ID
 router.get('/:id', async (req, res) => {
-  const { id } = req.params; // Extraemos el ID de los parámetros de la URL
+  const { id } = req.params;
   try {
     const [rows] = await pool.query('SELECT * FROM productos WHERE id = ?', [id]);
     if (rows.length > 0) {
-      res.json({ success: true, data: rows[0] }); // Devolvemos el producto encontrado
+      res.json({ success: true, data: rows[0] });
     } else {
-      res.status(404).json({ success: false, message: 'Producto no encontrado' }); // Si no se encuentra el producto
+      res.status(404).json({ success: false, message: 'Producto no encontrado' });
     }
   } catch (err) {
     console.error('Error al obtener el producto:', err);
@@ -29,11 +52,14 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Ruta para agregar un producto
+// Ruta para agregar un producto (CORREGIDO)
 router.post('/', async (req, res) => {
   const { nombre, precioP, imagen, cantidad } = req.body;
   try {
-    const [result] = await pool.query('INSERT INTO productos (nombre, precioP, imagen, cantidad) VALUES (?, ?, ?, ?)', [nombre, precioP, imagen, cantidad]);
+    const [result] = await pool.query(
+      'INSERT INTO productos (nombre, precioP, imagen, cantidad) VALUES (?, ?, ?, ?)',
+      [nombre, precioP, imagen, cantidad]
+    );
     res.status(201).json({ success: true, data: { id: result.insertId, nombre, precioP, imagen, cantidad } });
   } catch (err) {
     console.error('Error al agregar producto:', err);
@@ -41,12 +67,15 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Ruta para modificar un producto
+// Ruta para modificar un producto (CORREGIDO)
 router.put('/:id', async (req, res) => {
   const { id } = req.params;
   const { nombre, precioP, imagen, cantidad } = req.body;
   try {
-    const [result] = await pool.query('UPDATE productos SET nombre = ?, precioP = ?, imagen = ?, cantidad = ? WHERE id = ?', [nombre, precioP, imagen, cantidad, id]);
+    const [result] = await pool.query(
+      'UPDATE productos SET nombre = ?, precioP = ?, imagen = ?, cantidad = ? WHERE id = ?',
+      [nombre, precioP, imagen, cantidad, id]
+    );
     if (result.affectedRows > 0) {
       res.json({ success: true, message: 'Producto actualizado correctamente' });
     } else {

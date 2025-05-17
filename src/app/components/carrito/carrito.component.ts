@@ -3,23 +3,25 @@ import { CarritoService } from '../../services/carrito.service';
 import { Producto } from '../../models/producto';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 
 declare var paypal: any;
 
 @Component({
   selector: 'app-carrito',
+  standalone: true,
   imports: [CommonModule],
   templateUrl: './carrito.component.html',
   styleUrls: ['./carrito.component.css']
 })
 export class CarritoComponent implements OnInit {
   carrito: Producto[] = [];
-  mostrarBotonPayPal = false;
-  ivaPorcentaje = 0.16; // 16% de IVA (ajustable)
+  ivaPorcentaje = 0.16; // 16% de IVA
 
   constructor(
     private carritoService: CarritoService,
-    private router: Router
+    private router: Router,
+    private http: HttpClient
   ) {}
 
   ngOnInit(): void {
@@ -42,20 +44,35 @@ export class CarritoComponent implements OnInit {
         return fetch('http://localhost:3000/api/paypal/create-order', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
+          body: JSON.stringify({
             total: this.calcularTotal().toFixed(2),
             items: this.carrito
           })
-        }).then(res => res.json()).then(order => order.id);
+        }).then((res: Response) => res.json()).then((order: any) => order.id);
       },
       onApprove: (data: any, actions: any) => {
         return fetch(`http://localhost:3000/api/paypal/capture-order/${data.orderID}`, {
           method: 'POST'
-        }).then(res => res.json()).then(details => {
-          this.router.navigate(['/pago-completado']);
+        })
+        .then((res: Response) => res.json())
+        .then((details: any) => {
+          // 👉 Después del pago, actualizar stock en el backend
+          this.actualizarStockProductos().then(() => {
+            this.router.navigate(['/pago-completado']);
+          });
         });
       }
     }).render('#paypal-button-container');
+  }
+
+  async actualizarStockProductos(): Promise<void> {
+    try {
+      await this.http.post('http://localhost:3000/api/productos/actualizar-stock', {
+        productos: this.carrito
+      }).toPromise();
+    } catch (error) {
+      console.error('Error al actualizar el stock:', error);
+    }
   }
 
   aumentarCantidad(index: number): void {
@@ -70,19 +87,14 @@ export class CarritoComponent implements OnInit {
     this.actualizarPayPal();
   }
 
-  private actualizarPayPal(): void {
-    const container = document.getElementById('paypal-button-container');
-    if (container) {
-      container.innerHTML = '';
-      this.cargarPayPal();
-    }
-  }
-
   eliminarProducto(index: number): void {
     this.carritoService.eliminarProducto(index);
     this.carrito = this.carritoService.obtenerCarrito();
     if (this.carrito.length === 0) {
-      document.getElementById('paypal-button-container')!.innerHTML = '';
+      const container = document.getElementById('paypal-button-container');
+      if (container) {
+        container.innerHTML = '';
+      }
     }
   }
 
@@ -98,5 +110,13 @@ export class CarritoComponent implements OnInit {
 
   calcularTotal(): number {
     return this.calcularSubtotal() + this.calcularIVA();
+  }
+
+  private actualizarPayPal(): void {
+    const container = document.getElementById('paypal-button-container');
+    if (container) {
+      container.innerHTML = '';
+      this.cargarPayPal();
+    }
   }
 }

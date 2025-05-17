@@ -32,13 +32,18 @@ export class ProductoComponent implements OnInit {
   cargarProductos(): void {
     this.productoService.obtenerProductos().subscribe({
       next: (response) => {
+        // Si la respuesta es directamente el array
         if (Array.isArray(response)) {
           this.productos = response;
           this.productosFiltrados = [...this.productos];
-        } else if (response.data && Array.isArray(response.data)) {
+        } 
+        // Si la respuesta tiene un wrapper con propiedad 'data'
+        else if (response.data && Array.isArray(response.data)) {
           this.productos = response.data;
           this.productosFiltrados = [...this.productos];
-        } else {
+        }
+        // Si la estructura es diferente
+        else {
           console.error('Estructura de respuesta inesperada:', response);
         }
       },
@@ -59,18 +64,15 @@ export class ProductoComponent implements OnInit {
     );
   }
 
-  // Método para agregar al carrito
   agregarAlCarrito(producto: Producto): void {
     this.carritoService.agregarProducto(producto);
   }
 
-  // Redirigir al carrito
   irAlCarrito(): void {
     this.router.navigate(['/carrito']);
   }
 
-  // Redirigir al inventario
   irAlInventario(): void {
-    this.router.navigate(['/inventario']);  
+    this.router.navigate(['/inventario']); 
   }
 }
