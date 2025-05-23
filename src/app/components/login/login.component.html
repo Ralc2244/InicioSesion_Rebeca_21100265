@@ -1,0 +1,78 @@
+<div class="login-container">
+  <h2>Iniciar sesión</h2>
+  <form (ngSubmit)="onSubmit()" #loginForm="ngForm" novalidate>
+    <div>
+      <label for="email">Correo electrónico:</label>
+      <input
+        type="email"
+        id="email"
+        name="email"
+        [(ngModel)]="email"
+        required
+        email
+        #emailInput="ngModel"
+      />
+      <div *ngIf="emailInput.invalid && emailInput.touched" class="error">
+        Ingresa un correo válido.
+      </div>
+    </div>
+
+    <div>
+      <label for="password">Contraseña:</label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        [(ngModel)]="password"
+        required
+        minlength="4"
+        #passwordInput="ngModel"
+      />
+      <div *ngIf="passwordInput.invalid && passwordInput.touched" class="error">
+        Ingresa una contraseña válida (mínimo 4 caracteres).
+      </div>
+    </div>
+
+    <div *ngIf="errorMsg" class="error">{{ errorMsg }}</div>
+
+    <button type="submit" [disabled]="loading || loginForm.invalid">Ingresar</button>
+
+    <div *ngIf="loading">Cargando...</div>
+  </form>
+
+  <div class="links" style="margin-top: 15px; text-align: center;">
+    <button type="button" (click)="irARecuperar()" class="recover-button">
+      ¿Olvidaste tu contraseña?
+    </button>
+    <br />
+    <button type="button" (click)="irARegistro()" class="register-button">
+      ¿No tienes cuenta? Regístrate
+    </button>
+  </div>
+</div>
+
+<style>
+  .login-container {
+    max-width: 320px;
+    margin: auto;
+  }
+  .error {
+    color: red;
+    font-size: 0.9em;
+  }
+  input.ng-invalid.ng-touched {
+    border-color: red;
+  }
+  .register-button, .recover-button {
+    background-color: transparent;
+    border: none;
+    color: #007bff;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 0.9em;
+    margin-top: 8px;
+  }
+  .register-button:hover, .recover-button:hover {
+    color: #0056b3;
+  }
+</style>

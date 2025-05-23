@@ -1,0 +1,16 @@
+<div class="recuperar-container">
+  <h2>Recuperar Contraseña</h2>
+  <form (ngSubmit)="enviarEmail()" #form="ngForm" novalidate>
+    <div>
+      <label for="email">Correo electrónico:</label>
+      <input type="email" id="email" name="email" [(ngModel)]="email" required email #emailInput="ngModel" />
+      <div *ngIf="emailInput.invalid && emailInput.touched" class="error">Correo válido requerido.</div>
+    </div>
+
+    <div *ngIf="errorMsg" class="error">{{ errorMsg }}</div>
+    <div *ngIf="successMsg" class="success">{{ successMsg }}</div>
+
+    <button type="submit" [disabled]="loading || form.invalid">Verificar correo</button>
+    <div *ngIf="loading">Enviando...</div>
+  </form>
+</div>

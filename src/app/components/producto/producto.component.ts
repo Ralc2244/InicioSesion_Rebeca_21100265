@@ -71,8 +71,4 @@ export class ProductoComponent implements OnInit {
   irAlCarrito(): void {
     this.router.navigate(['/carrito']);
   }
-
-  irAlInventario(): void {
-    this.router.navigate(['/inventario']); 
-  }
 }

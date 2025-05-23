@@ -1,113 +1,126 @@
-/* Estilos blanco y negro para .productos-container */
 .productos-container {
-  background-color: #ffffff;
-  color: #000000;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  padding: 20px;
-  max-width: 1000px;
-  margin: auto;
-  border: 1px solid #000;
-}
-
-/* Título y subtítulo */
-.productos-container h2,
-.productos-container p {
-  text-align: center;
-  margin-bottom: 10px;
-  color: #111;
-}
-
-/* Lista de productos */
-.productos-lista {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
-}
-
-/* Estilo de cada producto */
-.producto {
-  border: 1px solid #333;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  color: #000;
-  padding: 15px;
-  width: 200px;
-  text-align: center;
-  transition: transform 0.2s;
-}
-
-.producto:hover {
-  transform: scale(1.05);
-}
-
-/* Imagen del producto (a color) */
-.producto img {
-  width: 100%;
-  height: auto;
-  border-radius: 5px;
-}
-
-/* Botón de agregar */
-.producto button {
-  background-color: #4caf50; /* Verde */
-  color: #fff;
-  border: none;
-  padding: 10px 12px;
-  margin-top: 10px;
-  cursor: pointer;
-  border-radius: 5px;
-  font-weight: bold;
-  transition: background-color 0.2s;
-}
-
-.producto button:hover {
-  background-color: #45a049; /* Verde más oscuro al pasar el mouse */
-}
-
-/* Botones de navegación */
-.botones-navegacion {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  margin-top: 20px;
-}
-
-.botones-navegacion button {
-  background-color: blue; /* Verde */
-  color: #fff;
-  border: 1px solid blue;
-  padding: 10px 15px;
-  border-radius: 5px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.2s, color 0.2s;
-}
-
-.botones-navegacion button:hover {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 25px;
   background-color: #fff;
-  color: #4caf50;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+  color: #000;
+  text-align: center;
 }
 
-/* Estilos para el buscador */
+.productos-container > p {
+  font-weight: bold;
+  color: #0b8043; /* verde oscuro */
+  margin-bottom: 10px;
+}
+
+.productos-container > h2 {
+  margin-bottom: 25px;
+  color: #0b8043;
+  font-weight: 700;
+}
+
 .buscador-container {
-  margin: 20px auto;
-  max-width: 500px;
-  width: 100%;
+  margin-bottom: 25px;
 }
 
 .buscador-input {
   width: 100%;
-  padding: 10px 15px;
-  border: 1px solid #000;
-  border-radius: 5px;
+  max-width: 400px;
+  padding: 10px 14px;
   font-size: 16px;
+  border: 2px solid #0b8043;
+  border-radius: 6px;
+  color: #000;
+  transition: border-color 0.3s ease;
 }
 
-/* Mensaje cuando no hay resultados */
-.mensaje-no-resultados {
+.buscador-input:focus {
+  outline: none;
+  border-color: #34a853; /* verde claro */
+  box-shadow: 0 0 6px #34a853;
+}
+
+.productos-lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.producto {
+  background-color: #f9fdf9;
+  border: 2px solid #0b8043;
+  border-radius: 8px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
+}
+
+.producto img {
   width: 100%;
-  margin-top: 20px;
-  font-style: italic;
+  max-height: 140px;
+  object-fit: contain;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
+.producto h3 {
+  margin-bottom: 10px;
+  color: #0b8043;
+}
+
+.producto p {
+  margin: 4px 0;
+  font-weight: 500;
+}
+
+.producto button {
+  margin-top: auto;
+  padding: 10px 16px;
+  font-size: 16px;
+  background-color: #0b8043;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.producto button:hover {
+  background-color: #34a853;
+}
+
+.botones-navegacion {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.botones-navegacion button {
+  background-color: #0b8043;
+  color: #fff;
+  font-size: 18px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.botones-navegacion button:hover {
+  background-color: #34a853;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .productos-lista {
+    grid-template-columns: 1fr;
+  }
+
+  .buscador-input {
+    max-width: 100%;
+  }
 }

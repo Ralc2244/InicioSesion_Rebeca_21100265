@@ -1,0 +1,42 @@
+<div class="cambiar-container">
+  <h2>Cambiar Contraseña</h2>
+  <p>Correo: <strong>{{ email }}</strong></p>
+  <form (ngSubmit)="cambiarContrasena()" #form="ngForm" novalidate>
+    <div>
+      <label for="nuevaContrasena">Nueva contraseña:</label>
+      <input
+        type="password"
+        id="nuevaContrasena"
+        name="nuevaContrasena"
+        [(ngModel)]="nuevaContrasena"
+        required
+        minlength="4"
+        #nuevaContrasenaInput="ngModel"
+      />
+      <div *ngIf="nuevaContrasenaInput.invalid && nuevaContrasenaInput.touched" class="error">
+        La contraseña debe tener al menos 4 caracteres.
+      </div>
+    </div>
+
+    <div>
+      <label for="confirmContrasena">Confirmar contraseña:</label>
+      <input
+        type="password"
+        id="confirmContrasena"
+        name="confirmContrasena"
+        [(ngModel)]="confirmContrasena"
+        required
+        #confirmContrasenaInput="ngModel"
+      />
+      <div *ngIf="confirmContrasenaInput.invalid && confirmContrasenaInput.touched" class="error">
+        Debes confirmar la contraseña.
+      </div>
+    </div>
+
+    <div *ngIf="errorMsg" class="error">{{ errorMsg }}</div>
+    <div *ngIf="successMsg" class="success">{{ successMsg }}</div>
+
+    <button type="submit" [disabled]="loading || form.invalid">Cambiar contraseña</button>
+    <div *ngIf="loading">Procesando...</div>
+  </form>
+</div>

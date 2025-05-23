@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const productosRouter = require('./routes/productos');
 const paypalRouter = require('./routes/paypal');  // Mantener ruta de Paypal
 const cors = require('cors');
+const authRouter = require('./routes/auth');
 
 // Configuración inicial
 const app = express();
@@ -26,6 +27,7 @@ app.use(morgan(ENVIRONMENT === 'development' ? 'dev' : 'combined')); // Registra
 // Aplicar el middleware de rate limiting
 app.use(limiter);
 
+app.use('/api/auth', authRouter);
 // Rutas principales
 app.use('/api/paypal', paypalRouter);  // Ruta de Paypal
 app.use('/api/productos', productosRouter);  // Ruta para productos
