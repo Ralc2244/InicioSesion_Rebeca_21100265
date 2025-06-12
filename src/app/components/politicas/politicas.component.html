@@ -1,0 +1,35 @@
+<div class="politicas-container">
+  <h2>Políticas de la Empresa</h2>
+  
+  <div class="disclaimer">
+    <h3>Disclaimer</h3>
+    <div class="politicas-content">
+      <p>Al utilizar nuestros servicios, usted acepta las siguientes políticas:</p>
+      
+      <h4>1. Política de Privacidad</h4>
+      <p>Respetamos su privacidad y nos comprometemos a proteger sus datos personales. Solo recopilamos información necesaria para procesar sus pedidos y mejorar su experiencia.</p>
+      
+      <h4>2. Términos de Servicio</h4>
+      <p>El uso de este sitio web está sujeto a nuestros términos y condiciones. Nos reservamos el derecho de modificar estos términos en cualquier momento.</p>
+      
+      <h4>3. Política de Devoluciones</h4>
+      <p>Aceptamos devoluciones dentro de los 15 días posteriores a la recepción del producto. Los productos deben estar en su estado original y con el empaque completo.</p>
+      
+      <h4>4. Garantías</h4>
+      <p>Todos nuestros productos tienen una garantía de 1 año contra defectos de fabricación. Esta garantía no cubre daños por mal uso.</p>
+    </div>
+    
+    <div class="aceptacion">
+      <input type="checkbox" id="acepto" [(ngModel)]="aceptoPoliticas">
+      <label for="acepto">He leído y acepto las políticas de la empresa</label>
+    </div>
+    
+    <button (click)="confirmarAceptacion()" [disabled]="!aceptoPoliticas" class="confirm-button">
+      Confirmar
+    </button>
+    
+    <div *ngIf="mensajeConfirmacion" class="confirmation-message">
+      {{ mensajeConfirmacion }}
+    </div>
+  </div>
+</div>

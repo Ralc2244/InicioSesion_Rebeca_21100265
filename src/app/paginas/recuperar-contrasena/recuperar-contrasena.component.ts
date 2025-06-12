@@ -1,48 +1,45 @@
 import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../components/environment/environment';
 
 @Component({
   selector: 'app-recuperar-contrasena',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule], // Importaciones necesarias
   templateUrl: './recuperar-contrasena.component.html',
   styleUrls: ['./recuperar-contrasena.component.css']
 })
 export class RecuperarContrasenaComponent {
   email: string = '';
-  errorMsg: string = '';
-  successMsg: string = '';
   loading: boolean = false;
+  emailSent: boolean = false; // Propiedad faltante
+  errorMsg: string = ''; // Propiedad faltante
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient) {}
 
-  enviarEmail() {
-    this.errorMsg = '';
-    this.successMsg = '';
-    if (!this.email) {
-      this.errorMsg = 'Por favor ingresa un correo válido';
-      return;
-    }
+  onSubmit(form: NgForm) { // Añade el parámetro form
+    if (form.invalid) return;
+
     this.loading = true;
-    // Llama al backend para enviar email de recuperación (simulado aquí)
-    this.http.post<any>('http://localhost:3000/api/auth/recuperar-contrasena', { email: this.email }).subscribe({
-      next: res => {
-        this.loading = false;
-        if (res.success) {
-          this.successMsg = 'Correo verificado';
-          // Simula ir a la página para cambiar contraseña después de 3 seg
-          setTimeout(() => this.router.navigate(['/cambiar-contrasena', this.email]), 3000);
-        } else {
-          this.errorMsg = res.message || 'Error enviando el correo';
+    this.errorMsg = '';
+    
+    this.http.post(`${environment.apiUrl}/recuperar-contrasena.php`, { email: this.email })
+      .subscribe({
+        next: (response: any) => {
+          this.loading = false;
+          if (response.success) {
+            this.emailSent = true;
+          } else {
+            this.errorMsg = response.message || 'Ocurrió un error al enviar el correo';
+          }
+        },
+        error: (error) => {
+          this.loading = false;
+          this.errorMsg = 'Error de conexión con el servidor';
+          console.error('Error:', error);
         }
-      },
-      error: err => {
-        this.loading = false;
-        this.errorMsg = err.error?.message || 'Error en el servidor';
-      }
-    });
+      });
   }
 }

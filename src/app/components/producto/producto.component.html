@@ -1,33 +1,42 @@
 <div class="productos-container">
-  <p>CETRIONIC digital</p>
   <h2>Catálogo de Productos</h2>
   
-  <!-- Campo de búsqueda -->
   <div class="buscador-container">
-    <input 
-      type="text" 
-      [(ngModel)]="terminoBusqueda" 
-      (input)="filtrarProductos()"
-      placeholder="Buscar productos..."
-      class="buscador-input"
-    />
-  </div>
-  
-  <div class="productos-lista">
-    <!-- Mostrar los productos filtrados -->
-    <div *ngFor="let producto of productosFiltrados" class="producto">
-      <img [src]="producto.imagen" alt="{{ producto.nombre }}" />
-      <h3>{{ producto.nombre }}</h3>
-      <p>Precio: ${{ producto.precioP | number:'1.2-2' }}</p>
-      <p>Cantidad disponible: {{ producto.cantidad }}</p>
-      
-      <!-- Botón para agregar al carrito -->
-      <button (click)="agregarAlCarrito(producto)">Agregar al carrito</button>
+    <div class="search-box">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input 
+        type="text" 
+        [(ngModel)]="terminoBusqueda" 
+        (input)="filtrarProductos()"
+        placeholder="Buscar productos..."
+        class="buscador-input"
+      />
     </div>
   </div>
   
-  <!-- Botones para navegación -->
-  <div class="botones-navegacion">
-    <button (click)="irAlCarrito()">Ir al Carrito</button>
+  <div class="productos-lista">
+    <div *ngFor="let producto of productosFiltrados" class="producto">
+      <div class="producto-imagen-container">
+        <img [src]="producto.imagen" alt="{{ producto.nombre }}" />
+        <div class="producto-badge" *ngIf="producto.cantidad > 0">
+          {{ producto.cantidad }} disponibles
+        </div>
+      </div>
+      <div class="producto-info">
+        <h3>{{ producto.nombre }}</h3>
+        <p class="producto-precio">${{ producto.precioP | number:'1.2-2' }}</p>
+        <button (click)="agregarAlCarrito(producto)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+          Agregar al carrito
+        </button>
+      </div>
+    </div>
   </div>
 </div>

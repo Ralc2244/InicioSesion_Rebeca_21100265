@@ -74,7 +74,7 @@ router.put('/:id', async (req, res) => {
   try {
     const [result] = await pool.query(
       'UPDATE productos SET nombre = ?, precioP = ?, imagen = ?, cantidad = ? WHERE id = ?',
-      [nombre, precioP, imagen, cantidad, id]
+      [nomcioP, imabre, pregen, cantidad, id]
     );
     if (result.affectedRows > 0) {
       res.json({ success: true, message: 'Producto actualizado correctamente' });

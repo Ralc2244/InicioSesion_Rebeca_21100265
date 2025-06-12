@@ -1,16 +1,55 @@
-<div class="recuperar-container">
-  <h2>Recuperar Contraseña</h2>
-  <form (ngSubmit)="enviarEmail()" #form="ngForm" novalidate>
-    <div>
-      <label for="email">Correo electrónico:</label>
-      <input type="email" id="email" name="email" [(ngModel)]="email" required email #emailInput="ngModel" />
-      <div *ngIf="emailInput.invalid && emailInput.touched" class="error">Correo válido requerido.</div>
+<div class="recovery-container">
+  <div class="recovery-card">
+    <h2>Recuperar Contraseña</h2>
+    
+    @if (!emailSent) {
+      <form (ngSubmit)="onSubmit(form)" #form="ngForm">
+        <div class="form-group">
+          <label for="email">Correo electrónico</label>
+          <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            [(ngModel)]="email" 
+            required 
+            email
+            #emailInput="ngModel"
+          >
+          @if (emailInput.invalid && emailInput.touched) {
+            <div class="error-message">
+              Por favor ingresa un correo válido
+            </div>
+          }
+        </div>
+
+        <button type="submit" [disabled]="loading || form.invalid">
+          @if (!loading) {
+            <span>Enviar enlace de recuperación</span>
+          }
+          @if (loading) {
+            <span>Enviando...</span>
+          }
+        </button>
+      </form>
+    }
+
+    @if (errorMsg) {
+      <div class="error-message">{{ errorMsg }}</div>
+    }
+
+    @if (emailSent) {
+      <div class="success-message">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+        <h3>¡Correo enviado con éxito!</h3>
+        <p>Hemos enviado un enlace de recuperación a tu correo electrónico.</p>
+      </div>
+    }
+
+    <div class="back-to-login">
+      <a routerLink="/login">Volver al inicio de sesión</a>
     </div>
-
-    <div *ngIf="errorMsg" class="error">{{ errorMsg }}</div>
-    <div *ngIf="successMsg" class="success">{{ successMsg }}</div>
-
-    <button type="submit" [disabled]="loading || form.invalid">Verificar correo</button>
-    <div *ngIf="loading">Enviando...</div>
-  </form>
+  </div>
 </div>

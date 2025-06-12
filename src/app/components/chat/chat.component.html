@@ -1,0 +1,43 @@
+<div class="chat-container">
+  <h2>Chat de Ayuda</h2>
+  
+  <div class="chat-messages">
+    <div *ngFor="let message of mensajes" class="message" [class.user]="message.esUsuario">
+      <p>{{ message.texto }}</p>
+      <div class="message-time">
+        {{ message.hora | date:'HH:mm' }}
+        <span *ngIf="message.esUsuario">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="chat-input">
+    <select [(ngModel)]="preguntaSeleccionada" class="pregunta-select">
+      <option value="" disabled selected>Selecciona una pregunta...</option>
+      <option *ngFor="let pregunta of preguntas" [value]="pregunta.pregunta">
+        {{ pregunta.pregunta }}
+      </option>
+    </select>
+    <button (click)="enviarPregunta()" class="send-button">Enviar</button>
+  </div>
+  
+  <div class="quick-questions">
+    <h3>
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+        <line x1="12" y1="17" x2="12" y2="17"></line>
+      </svg>
+      Preguntas frecuentes:
+    </h3>
+    <button *ngFor="let pregunta of preguntas" 
+            (click)="seleccionarPreguntaRapida(pregunta.pregunta)"
+            class="quick-question">
+      {{ pregunta.pregunta }}
+    </button>
+  </div>
+</div>

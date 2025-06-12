@@ -1,85 +1,168 @@
 .login-container {
-  max-width: 360px;
-  margin: 50px auto;
-  padding: 30px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  color: #000;
-  font-family: Arial, sans-serif;
+  max-width: 400px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
-h2 {
+.login-container h2 {
+  font-size: 2rem;
+  color: #1e293b;
+  margin-bottom: 1.5rem;
   text-align: center;
-  margin-bottom: 25px;
-  color: #0b8043; /* verde oscuro */
+  position: relative;
 }
 
-label {
+.login-container h2::after {
+  content: "";
   display: block;
-  margin-bottom: 6px;
-  font-weight: bold;
+  width: 80px;
+  height: 4px;
+  background-color: #2563eb;
+  margin: 0.5rem auto 1.5rem;
+  border-radius: 2px;
 }
 
-input[type="email"],
-input[type="password"] {
+.login-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.login-container label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #1e293b;
+  font-weight: 500;
+}
+
+.login-container input {
   width: 100%;
-  padding: 10px;
-  margin-bottom: 18px;
-  border: 2px solid #0b8043; /* borde verde */
-  border-radius: 4px;
-  font-size: 16px;
-  color: #000;
+  padding: 0.8rem 1.2rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
 }
 
-input[type="email"]:focus,
-input[type="password"]:focus {
+.login-container input:focus {
   outline: none;
-  border-color: #34a853; /* verde más claro */
-  box-shadow: 0 0 6px #34a853;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
 }
 
-button[type="submit"] {
-  width: 100%;
-  background-color: #0b8043;
+.login-container input.ng-invalid.ng-touched {
+  border-color: #ef4444;
+}
+
+.login-container button[type="submit"] {
+  background-color: #2563eb;
   color: white;
-  font-size: 18px;
-  padding: 12px;
   border: none;
-  border-radius: 6px;
+  padding: 0.8rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
 }
 
-button[type="submit"]:hover:not(:disabled) {
-  background-color: #34a853;
+.login-container button[type="submit"]:hover {
+  background-color: #1e40af;
 }
 
-button[type="submit"]:disabled {
-  background-color: #a5d6a7; /* verde claro grisáceo */
+.login-container button[type="submit"]:disabled {
+  background-color: #cbd5e1;
   cursor: not-allowed;
 }
 
 .error {
-  color: #cc0000;
-  font-size: 0.9em;
-  margin-top: -12px;
-  margin-bottom: 15px;
+  color: #ef4444;
+  font-size: 0.9rem;
+  margin-top: 0.3rem;
 }
 
+.links {
+  margin-top: 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.recover-button,
 .register-button {
   background-color: transparent;
   border: none;
-  color: #0b8043;
+  color: #2563eb;
+  text-decoration: none;
   cursor: pointer;
-  font-size: 0.95em;
-  text-decoration: underline;
-  margin-top: 15px;
-  display: block;
-  width: 100%;
-  text-align: center;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  padding: 0.5rem;
+  border-radius: 6px;
 }
 
+.recover-button:hover,
 .register-button:hover {
-  color: #34a853;
+  color: #1e40af;
+  background-color: #f8fafc;
+  text-decoration: underline;
+}
+
+.loading {
+  text-align: center;
+  color: #64748b;
+  margin: 1rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.loading::after {
+  content: "";
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 3px solid rgba(37, 99, 235, 0.3);
+  border-radius: 50%;
+  border-top-color: #2563eb;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Estilo para el icono de correo y contraseña */
+.input-container {
+  position: relative;
+}
+
+.input-container label::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: 38px;
+  font-size: 1.2rem;
+}
+
+#email {
+  padding-left: 40px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z'%3E%3C/path%3E%3Cpolyline points='22,6 12,13 2,6'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 12px center;
+}
+
+#password {
+  padding-left: 40px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='11' width='18' height='11' rx='2' ry='2'%3E%3C/rect%3E%3Cpath d='M7 11V7a5 5 0 0 1 10 0v4'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 12px center;
 }

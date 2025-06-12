@@ -1,1 +1,29 @@
 /* You can add global styles to this file, and also import other style files */
+/* Estilos base */
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f8fafc;
+  color: #1e293b;
+  margin: 0;
+  padding: 0;
+  line-height: 1.5;
+}
+
+/* Animaciones suaves para los elementos interactivos */
+button,
+a {
+  transition: all 0.2s ease;
+}
+
+/* Efecto de carga para imágenes */
+img {
+  background: linear-gradient(110deg, #f8fafc 8%, #f1f5f9 18%, #f8fafc 33%);
+  background-size: 200% 100%;
+  animation: 1.5s shine linear infinite;
+}
+
+@keyframes shine {
+  to {
+    background-position-x: -200%;
+  }
+}
