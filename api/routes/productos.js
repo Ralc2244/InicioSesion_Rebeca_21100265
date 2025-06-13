@@ -71,21 +71,34 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   const { id } = req.params;
   const { nombre, precioP, imagen, cantidad } = req.body;
+
+  console.log('ID recibido:', id);
+  console.log('Datos recibidos:', { nombre, precioP, imagen, cantidad });
+
+  if (!nombre || precioP == null || !imagen || cantidad == null) {
+    return res.status(400).json({
+      success: false,
+      message: 'Datos incompletos o inválidos para actualizar el producto'
+    });
+  }
+
   try {
     const [result] = await pool.query(
       'UPDATE productos SET nombre = ?, precioP = ?, imagen = ?, cantidad = ? WHERE id = ?',
-      [nomcioP, imabre, pregen, cantidad, id]
+      [nombre, precioP, imagen, cantidad, id]
     );
+
     if (result.affectedRows > 0) {
-      res.json({ success: true, message: 'Producto actualizado correctamente' });
+      res.json({ success: true, data: { nombre, precioP, imagen, cantidad, id } });
     } else {
       res.status(404).json({ success: false, message: 'Producto no encontrado' });
     }
   } catch (err) {
     console.error('Error al actualizar producto:', err);
-    res.status(500).json({ success: false, message: 'Error al actualizar producto' });
+    res.status(500).json({ success: false, message: 'Error al actualizar producto', error: err.message });
   }
 });
+
 
 // Ruta para eliminar un producto
 router.delete('/:id', async (req, res) => {

@@ -92,28 +92,36 @@ export class InventarioComponent implements OnInit {
 
   // Guardar cambios de edición
   guardarCambios(): void {
-    if (this.productoSeleccionado && this.validarProducto(this.productoSeleccionado)) {
-      this.cargando = true;
-      this.inventarioService.modificarProducto(
-        this.productoSeleccionado.id,
-        this.productoSeleccionado
-      ).subscribe({
-        next: () => {
-          this.mostrarNotificacionTemporal('Producto actualizado correctamente', 'success');
-          this.productoSeleccionado = null;
-          this.cargarProductos();
-        },
-        error: (err) => {
-          console.error('Error al actualizar producto:', err);
-          this.mostrarNotificacionTemporal(
-            err.message || 'Error al actualizar producto',
-            'error'
-          );
-          this.cargando = false;
+  if (this.productoSeleccionado && this.validarProducto(this.productoSeleccionado)) {
+    this.cargando = true;
+    
+    this.inventarioService.modificarProducto(
+      this.productoSeleccionado.id,
+      this.productoSeleccionado
+    ).subscribe({
+      next: (productoActualizado) => {
+        this.mostrarNotificacionTemporal('Producto actualizado correctamente', 'success');
+        this.productoSeleccionado = null;
+        this.cargarProductos();
+      },
+      error: (err) => {
+        console.error('Error completo:', err);
+        let mensajeError = err.message;
+        
+        // Mensajes más amigables para el usuario
+        if (err.message.includes('interno del servidor')) {
+          mensajeError = 'Ocurrió un error inesperado. Por favor intenta nuevamente.';
         }
-      });
-    }
+        
+        this.mostrarNotificacionTemporal(mensajeError, 'error');
+        this.cargando = false;
+      },
+      complete: () => {
+        this.cargando = false;
+      }
+    });
   }
+}
 
   // Cancelar edición
   cancelarEdicion(): void {
